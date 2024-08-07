@@ -160,18 +160,14 @@ def algoritmo_genetico_simple(f:str, n:int, n_generaciones:int, p_c:float, p_m:f
     poblacion = []
     for _ in range(n):
         individuo = Individuo(random.uniform(intv_busq[0],intv_busq[1]),0)
-        individuo.aptitud=f(individuo.x)+suma_aptitud_positiva
+        individuo.aptitud=f(individuo.x)+suma_aptitud_positiva #evaluacion de la aptitud
         individuo.bits = float_to_bin(individuo.x, intv_busq[0]) #transformacion lineal para pasar a binario
         poblacion.append(individuo)
-    # print(poblacion)
     hist_por_generacion.append(poblacion)
     n_gen=0
     # apareamiento
     while n_gen < n_generaciones:
         n_gen+=1
-        # Evaluacion
-        # for individuo in poblacion:
-        #     individuo.aptitud = f(individuo.x)+100000
         # Selección
         aptitudes = [individuo.aptitud for individuo in poblacion]
         # Cruza
@@ -192,7 +188,7 @@ def algoritmo_genetico_simple(f:str, n:int, n_generaciones:int, p_c:float, p_m:f
         # mutacion
         for individuo in new_gen:
             individuo.bits=mutacion_bit(individuo.bits, p_m)
-            individuo.aptitud = f(individuo.x)+suma_aptitud_positiva
+            individuo.aptitud = f(individuo.x)+suma_aptitud_positiva #evaluacion de la aptitud
         poblacion = new_gen
         new_gen = []
         # Calcular aptitud promedio de la generación
@@ -212,20 +208,22 @@ aptitud_optima=0
 x= sympy.Symbol('x')
 f= sympy.lambdify(x,sympy.sympify(f))
 f_optima=[]
-for generacion in evolucion:
+
+for generacion in evolucion: #busqueda del mejor individuo
     for individuo in generacion:
         if individuo.aptitud>aptitud_optima:
             aptitud_optima=individuo.aptitud
             val_optimo=individuo.x
     mejor_individuo = max(generacion, key=lambda individuo: individuo.aptitud)
     f_optima.append(f(mejor_individuo.x))
+
 print('El punto optimo es:', val_optimo,'El valor optimo es',f(val_optimo), 'con aptitud:', aptitud_optima)
 plt.plot(generaciones, f_optima)
 plt.xlabel('Generaciones')
 plt.ylabel('Valor optimo')
 plt.show()
 
-# Escribir la historia de las generations en un archivo
+# Escribir la historia de las generaciones en el archivo historia_generaciones.txt
 with open('historia_generaciones.txt', 'w') as f:
     for i, generacion in enumerate(evolucion):
         f.write(f'Generación {i + 1}\n')
